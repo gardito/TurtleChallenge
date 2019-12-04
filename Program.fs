@@ -38,13 +38,13 @@ type Board = {
     sizeY: int
 }
 
-type RotateTurtle = Turtle -> Direction -> Turtle
+type RotateTurtle = Turtle -> Turtle
 type MoveTurtle =  Turtle -> Turtle
 type CheckState = Point -> Mine -> Exit -> TurtleState
 
 let rotateTurtle : RotateTurtle = 
-    fun turtle direction -> 
-        match direction with
+    fun turtle -> 
+        match turtle.Direction with
         | N -> { turtle with Direction = E }
         | E -> { turtle with Direction = S }
         | S -> { turtle with Direction = W }
@@ -64,9 +64,33 @@ let checkState : CheckState =
         elif turtlePos = exit then Success
         else StillInDanger
 
+let rec executeTurtle (moveTurtle:MoveTurtle) (rotateTurtle:RotateTurtle) (turtle:Turtle) (movements:Movement list) (mines:Mine list) (exit:Exit) : TurtleState = 
+    if movements.IsEmpty then StillInDanger
+    elif List.contains turtle.Position mines then MineHit
+    elif turtle.Position = exit then Success
+    else 
+        let newTurtle =
+            match movements.Head with
+            | Move -> moveTurtle turtle
+            | Rotate -> rotateTurtle turtle
+        executeTurtle moveTurtle rotateTurtle newTurtle movements.Tail mines exit
+
 [<EntryPoint>]
 let main argv =
     let board = { sizeX = 10; sizeY = 10 }
     let turtle = { Position = { X = 1; Y = 1 }; Direction = N}
+    let movements = [Move; Move; Rotate; Rotate; Move]
+    let mines = [{ X = 4; Y = 2 }]
+    let exit = { X = 1; Y = 2 }
+
+    let handleMovements = executeTurtle moveTurtle rotateTurtle
+
+    let result = handleMovements turtle movements mines exit
+
+    match result with
+        | StillInDanger -> printfn "Turtle is still in danger!"
+        | MineHit -> printfn "Turtle...Mine!"
+        | Success -> printfn "Turtle...Success!"
+        | _ -> printfn "wait, what?"
 
     0 // return an integer exit code
