@@ -45,18 +45,18 @@ type CheckState = Point -> Mine -> Exit -> TurtleState
 let rotateTurtle : RotateTurtle = 
     fun turtle direction -> 
         match direction with
-        | N -> { Position = turtle.Position; Direction = E }
-        | E -> { Position = turtle.Position; Direction = S }
-        | S -> { Position = turtle.Position; Direction = W }
-        | W -> { Position = turtle.Position; Direction = N }
+        | N -> { turtle with Direction = E }
+        | E -> { turtle with Direction = S }
+        | S -> { turtle with Direction = W }
+        | W -> { turtle with Direction = N }
 
 let moveTurtle : MoveTurtle =
     fun turtle -> 
         match turtle.Direction with
-        | N -> { Position = { X = turtle.Position.X; Y = turtle.Position.Y + 1 }; Direction = turtle.Direction }
-        | E -> { Position = { X = turtle.Position.X + 1; Y = turtle.Position.Y }; Direction = turtle.Direction }
-        | S -> { Position = { X = turtle.Position.X; Y = turtle.Position.Y - 1 }; Direction = turtle.Direction }
-        | W -> { Position = { X = turtle.Position.X - 1; Y = turtle.Position.Y }; Direction = turtle.Direction }
+        | N -> { turtle with Position = { X = turtle.Position.X; Y = turtle.Position.Y + 1 } }
+        | E -> { turtle with Position = { X = turtle.Position.X + 1; Y = turtle.Position.Y } }
+        | S -> { turtle with Position = { X = turtle.Position.X; Y = turtle.Position.Y - 1 } }
+        | W -> { turtle with Position = { X = turtle.Position.X - 1; Y = turtle.Position.Y } }
 
 let checkState : CheckState =
     fun turtlePos mine exit -> 
