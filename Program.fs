@@ -12,7 +12,7 @@ type Point = {
     Y: int
 }
 
-type Direction = | N | E | S | W
+type Direction = N | E | S | W
 
 type Turtle = {
     Position: Point
@@ -40,7 +40,6 @@ type Board = {
 
 type RotateTurtle = Turtle -> Turtle
 type MoveTurtle =  Turtle -> Turtle
-type CheckState = Point -> Mine -> Exit -> TurtleState
 
 let rotateTurtle : RotateTurtle = 
     fun turtle -> 
@@ -57,12 +56,6 @@ let moveTurtle : MoveTurtle =
         | E -> { turtle with Position = { X = turtle.Position.X + 1; Y = turtle.Position.Y } }
         | S -> { turtle with Position = { X = turtle.Position.X; Y = turtle.Position.Y - 1 } }
         | W -> { turtle with Position = { X = turtle.Position.X - 1; Y = turtle.Position.Y } }
-
-let checkState : CheckState =
-    fun turtlePos mine exit -> 
-        if turtlePos = mine then MineHit
-        elif turtlePos = exit then Success
-        else StillInDanger
 
 let rec executeTurtle (moveTurtle:MoveTurtle) (rotateTurtle:RotateTurtle) (turtle:Turtle) (movements:Movement list) (mines:Mine list) (exit:Exit) : TurtleState = 
     if movements.IsEmpty then StillInDanger
